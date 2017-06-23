@@ -1,4 +1,4 @@
-const nodeExternals = require('webpack-node-externals');
+const webpack = require('webpack');
 var path = require('path');
 const loaders = [
     {
@@ -11,13 +11,48 @@ const loaders = [
     }
 ];
 
-const client = {
-    entry: './example/src/example.js',
+const WebpackConfig = {
+    entry: './src/GitGraph.js',
     output: {
-        path: path.resolve('./example/build'),
-        filename: 'react-gitgraph.js'
+        path: path.resolve('./lib'),
+        filename: 'react-gitgraph.js',
+        libraryTarget: 'umd',
+        library: 'react-gitgraph'
     },
     module: {loaders},
 };
 
-module.exports = [client];
+if ( process.env.NODE_ENV === 'production' ) {
+
+    WebpackConfig.externals = {
+        'react': 'react',
+        'react-dom': 'react-dom'
+    };
+
+    WebpackConfig.plugins = [
+        new webpack.optimize.AggressiveMergingPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            beautify: false,
+            mangle: {
+                screw_ie8: true,
+            },
+            compress: {
+                warnings: false,
+                screw_ie8: true
+            },
+            comments: false
+        }),
+    ];
+
+}
+
+const ExampleWebpackConfig = {
+  entry: './example/src/example.js',
+  output: {
+      path: path.resolve('./example/build'),
+      filename: 'react-gitgraph.js'
+  },
+  module: {loaders},
+};
+
+module.exports = [WebpackConfig,ExampleWebpackConfig];

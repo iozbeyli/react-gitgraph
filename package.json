@@ -2,13 +2,20 @@
   "name": "react-gitgraph",
   "version": "0.0.1",
   "description": "React implementation of Gitgraph.js library",
-  "main": "index.js",
+  "main": "lib/react-gitgraph.js",
   "scripts": {
-    "build": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "NODE_ENV=development webpack -w",
+    "build:dev": "NODE_ENV=development webpack",
+    "build:production": "NODE_ENV=production webpack -p"
   },
-  "author": "İsmet Melih Özbeyli",
-  "license": "ISC",
+  "keywords": [
+    "Version Control",
+    "Git Graph",
+    "gitgraph.js"
+  ],
+  "repository": "https://github.com/iozbeyli/react-gitgraph.git",
+  "author": "İsmet Melih Özbeyli <imozbeyli@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.25.0",
@@ -24,5 +31,10 @@
   "dependencies": {
     "gitgraph.js": "^1.11.3",
     "prop-types": "^15.5.10"
+  },
+  "peerDependency": {
+    "gitgraph.js": "^1.11.3",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
   }
 }
