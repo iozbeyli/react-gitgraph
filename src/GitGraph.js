@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-require('gitgraph.js/src/gitgraph.js');
+
 
 export default class ReactGitGraph extends React.Component{
   constructor(props){
@@ -13,6 +13,7 @@ export default class ReactGitGraph extends React.Component{
   };
 
   componentDidMount() {
+      require('gitgraph.js/src/gitgraph.js');//For server side rendering
       let options = {
           ...this.props.options,
           canvas: this.canvas
