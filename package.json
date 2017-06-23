@@ -1,6 +1,6 @@
 {
   "name": "react-gitgraph",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React implementation of Gitgraph.js library",
   "main": "lib/react-gitgraph.js",
   "scripts": {
