@@ -44,7 +44,6 @@ export default class ReactGitGraph extends React.Component{
             name: "hotfix",
             column: 2             // which column index it should be displayed in
         });
-        this.commit();
     }
 
     return(
