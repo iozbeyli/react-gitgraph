@@ -17,11 +17,24 @@ export default class ReactGitGraph extends React.Component{
           ...this.props.options,
           canvas: this.canvas
       };
-      let gitgraph = this.props.gitgraph || new GitGraph(options);
+      let gitgraph = new GitGraph(options);
+      this.props.initializeGraph(gitgraph);
 
       this.setState({
           gitgraph: gitgraph
       });
+  }
+
+  getGitGraph(){
+    return this.state.gitgraph;
+  }
+
+  initializeGraphInner(){
+    let gitgraph = this.state.gitgraph;
+    this.props.initializeGraph(gitgraph);
+    this.setState({
+      gitgraph: gitgraph
+    })
   }
 
   commit(){
@@ -33,19 +46,6 @@ export default class ReactGitGraph extends React.Component{
   }
 
   render(){
-    let {gitgraph} = this.state;
-    if(gitgraph){
-        let master = gitgraph.branch("master");
-        gitgraph.commit().commit().commit();         // 3 commits upon HEAD
-        let develop = gitgraph.branch("develop");    // New branch from HEAD
-        let myfeature = develop.branch("myfeature"); // New branch from develop
-        let hotfix = gitgraph.branch({
-            parentBranch: develop,
-            name: "hotfix",
-            column: 2             // which column index it should be displayed in
-        });
-    }
-
     return(
       <canvas id="gitGraph" ref={(canvas) => { this.canvas = canvas; }}></canvas>
     );
@@ -55,5 +55,6 @@ export default class ReactGitGraph extends React.Component{
 ReactGitGraph.propTypes = {
     options: PropTypes.object.isRequired,
     graph: PropTypes.object,
-    gitgraph: PropTypes.object
+    gitgraph: PropTypes.object,
+    initializeGraph: PropTypes.func.isRequired
 };

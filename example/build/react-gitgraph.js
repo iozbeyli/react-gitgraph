@@ -10289,6 +10289,8 @@ module.exports = getHostComponentFromComposite;
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = __webpack_require__(50);
 
 var _react2 = _interopRequireDefault(_react);
@@ -10303,11 +10305,79 @@ var _GitGraph2 = _interopRequireDefault(_GitGraph);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_reactDom2.default.render(_react2.default.createElement(_GitGraph2.default, { options: {
-                template: "metro",
-                reverseArrow: false,
-                orientation: "horizontal",
-                mode: "compact" } }), document.getElementById('app'));
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var App = function (_React$Component) {
+  _inherits(App, _React$Component);
+
+  function App(props) {
+    _classCallCheck(this, App);
+
+    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+
+    _this.initializeGraph = _this.initializeGraph.bind(_this);
+    _this.onChangeGraph = _this.onChangeGraph.bind(_this);
+    return _this;
+  }
+
+  _createClass(App, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {}
+  }, {
+    key: 'onChangeGraph',
+    value: function onChangeGraph() {
+      this.gitgraph.getGitGraph().commit();
+    }
+  }, {
+    key: 'initializeGraph',
+    value: function initializeGraph(gitgraph) {
+      var master = gitgraph.branch("master");
+      gitgraph.commit().commit().commit(); // 3 commits upon HEAD
+      var develop = gitgraph.branch("develop"); // New branch from HEAD
+      var myfeature = develop.branch("myfeature"); // New branch from develop
+      var hotfix = gitgraph.branch({
+        parentBranch: develop,
+        name: "hotfix",
+        column: 2 // which column index it should be displayed in
+      });
+      gitgraph.commit().commit().commit();
+      master.commit().commit().commit();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(_GitGraph2.default, {
+          initializeGraph: this.initializeGraph,
+          ref: function ref(gitgraph) {
+            _this2.gitgraph = gitgraph;
+          },
+          options: {
+            template: "metro",
+            reverseArrow: false,
+            orientation: "horizontal",
+            mode: "compact" } }),
+        _react2.default.createElement(
+          'button',
+          { onClick: this.onChangeGraph },
+          'Change'
+        )
+      );
+    }
+  }]);
+
+  return App;
+}(_react2.default.Component);
+
+_reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
 
 /***/ }),
 /* 85 */
@@ -22463,8 +22533,23 @@ var ReactGitGraph = function (_React$Component) {
             var options = _extends({}, this.props.options, {
                 canvas: this.canvas
             });
-            var gitgraph = this.props.gitgraph || new GitGraph(options);
+            var gitgraph = new GitGraph(options);
+            this.props.initializeGraph(gitgraph);
 
+            this.setState({
+                gitgraph: gitgraph
+            });
+        }
+    }, {
+        key: 'getGitGraph',
+        value: function getGitGraph() {
+            return this.state.gitgraph;
+        }
+    }, {
+        key: 'initializeGraphInner',
+        value: function initializeGraphInner() {
+            var gitgraph = this.state.gitgraph;
+            this.props.initializeGraph(gitgraph);
             this.setState({
                 gitgraph: gitgraph
             });
@@ -22483,21 +22568,6 @@ var ReactGitGraph = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var gitgraph = this.state.gitgraph;
-
-            if (gitgraph) {
-                var master = gitgraph.branch("master");
-                gitgraph.commit().commit().commit(); // 3 commits upon HEAD
-                var develop = gitgraph.branch("develop"); // New branch from HEAD
-                var myfeature = develop.branch("myfeature"); // New branch from develop
-                var hotfix = gitgraph.branch({
-                    parentBranch: develop,
-                    name: "hotfix",
-                    column: 2 // which column index it should be displayed in
-                });
-                this.commit();
-            }
-
             return _react2.default.createElement('canvas', { id: 'gitGraph', ref: function ref(canvas) {
                     _this2.canvas = canvas;
                 } });
@@ -22513,7 +22583,8 @@ exports.default = ReactGitGraph;
 ReactGitGraph.propTypes = {
     options: _propTypes2.default.object.isRequired,
     graph: _propTypes2.default.object,
-    gitgraph: _propTypes2.default.object
+    gitgraph: _propTypes2.default.object,
+    initializeGraph: _propTypes2.default.func.isRequired
 };
 
 /***/ }),
