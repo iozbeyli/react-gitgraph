@@ -22,7 +22,7 @@ export default class ReactGitGraph extends React.Component{
       this.props.initializeGraph(gitgraph);
 
       this.setState({
-          gitgraph: gitgraph
+          gitgraph: gitgraph,
       });
   }
 
